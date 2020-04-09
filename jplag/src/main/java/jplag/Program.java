@@ -452,10 +452,22 @@ public class Program implements ProgramI {
 				throw new jplag.ExitException(options.root_dir + " is not a directory!");
 			}
 		}
-		for (String file : options.fileList){
-			submissions.addElement(new Submission(file, f, this, get_language()));
-		}
-	}
+
+        for (String filename : options.fileList) {
+            File file = new File(filename);
+
+            if (file.isDirectory()) {
+                if (!options.read_subdirs) {
+                    // Exit gracefully instead of crashing in (some) parsers.
+                    throw new jplag.ExitException("Submissions include directories, but directory contents are not checked. " +
+                            "Did you mean to include '-s'?");
+                }
+                submissions.addElement(new Submission(filename, file, true, this, get_language()));
+            } else {
+                submissions.addElement(new Submission(filename, f, this, get_language()));
+            }
+        }
+    }
 
 
     /**

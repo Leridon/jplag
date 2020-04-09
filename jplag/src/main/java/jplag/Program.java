@@ -256,9 +256,16 @@ public class Program implements ProgramI {
             }
 
             for (j = (i + 1); j < size; j++) {
+                count++;
+                options.setProgress(count * 100 / totalcomps);
+
                 s2 = submissions.elementAt(j);
+
                 if (s2.struct == null) {
-                    count++;
+                    continue;
+                }
+                if (options.submissionFilter != null &&
+                        !options.submissionFilter.shouldCheck(s1, s2)) {
                     continue;
                 }
 
@@ -275,8 +282,6 @@ public class Program implements ProgramI {
                 }
 
                 registerMatch(match, dist, avgmatches, maxmatches, null, i, j);
-                count++;
-                options.setProgress(count * 100 / totalcomps);
             }
         }
         options.setProgress(100);
@@ -355,6 +360,15 @@ public class Program implements ProgramI {
                 s2 = submissions.elementAt(j);
             } while (s2.struct == null);
 
+            // Increment count before potentially discarding the check to keep progress correct
+            count++;
+            options.setProgress(count * 100 / totalcomps);
+
+            if (options.submissionFilter != null &&
+                    !options.submissionFilter.shouldCheck(s1, s2)) {
+                continue;
+            }
+
             match = this.gSTiling.compare(s1, s2);
 
             anz++;
@@ -370,8 +384,6 @@ public class Program implements ProgramI {
             }
 
             registerMatch(match, dist, avgmatches, maxmatches, minmatches, i, j);
-            count++;
-            options.setProgress(count * 100 / totalcomps);
 
             i = j;
         }
@@ -522,6 +534,9 @@ public class Program implements ProgramI {
                 s2 = submissions.elementAt(j);
                 if (s2.struct == null)
                     continue;
+                if (options.submissionFilter != null &&
+                    !options.submissionFilter.shouldCheck(s1, s2))
+                    continue;
 
                 match = this.gSTiling.compare(s1, s2);
                 similarity[count++] = (int) match.percent();
@@ -590,14 +605,16 @@ public class Program implements ProgramI {
                 for (j = (i + 1); j <= endA; j++) {
                     s2 = submissions.elementAt(j);
                     if (s2.struct == null) {
-                        count++;
+                        continue;
+                    }
+                    if (options.submissionFilter != null &&
+                        !options.submissionFilter.shouldCheck(s1, s2)) {
                         continue;
                     }
 
                     match = this.gSTiling.compare(s1, s2);
                     registerMatch(match, dist, avgmatches, maxmatches, null, i, j);
                     comparisons++;
-                    count++;
                 }
             }
             //      progress.set(count - progStart);
@@ -1286,9 +1303,15 @@ public class Program implements ProgramI {
                 continue;
             }
             for (j = 0; j < size; j++) {
+                count++;
+                options.setProgress(count * 100 / totalcomps);
+
                 s2 = submissions.elementAt(j);
                 if ((i == j) || (s2.struct == null)) {
-                    count++;
+                    continue;
+                }
+                if (options.submissionFilter != null &&
+                    !options.submissionFilter.shouldCheck(s1, s2)) {
                     continue;
                 }
 
@@ -1306,9 +1329,6 @@ public class Program implements ProgramI {
 
                 if (options.clustering)
                     options.similarity.setSimilarity(i, j, percent);
-
-                count++;
-                options.setProgress(count * 100 / totalcomps);
             }
 
             // now output matches:

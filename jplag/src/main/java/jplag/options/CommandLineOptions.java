@@ -4,6 +4,7 @@
 package jplag.options;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
@@ -12,6 +13,7 @@ import java.util.Vector;
 import jplag.ExitException;
 import jplag.Language;
 import jplag.Program;
+import jplag.SubmissionFilter;
 
 public class CommandLineOptions extends Options {
     private String[] args;
@@ -328,6 +330,26 @@ public class CommandLineOptions extends Options {
                 this.fileList.add(args[i + 1]);
                 i++;
             }
+        } else if (arg.equals("-blist") || arg.equals("-wlist")) {
+            if (args.length <= i + 1) {
+                throw new jplag.ExitException("Missing file for " + arg + " option!");
+            }
+            if (submissionFilter != null) {
+                throw new jplag.ExitException("You can only specify one blacklist or whitelist!");
+            }
+
+            try {
+                String listFile = args[i + 1];
+                if (arg.equals("-blist")) {
+                    submissionFilter = new SubmissionFilter.BlacklistFilter(listFile);
+                } else { // -wlist
+                    submissionFilter = new SubmissionFilter.WhitelistFilter(listFile);
+                }
+            } catch (IOException ex) {
+                throw new jplag.ExitException("Failed to load list: " + ex.getMessage());
+            }
+            i++;
+
         } else if (!scanOption(arg))
             throw new jplag.ExitException("Unknown option: " + arg,
                     ExitException.BAD_PARAMETER);

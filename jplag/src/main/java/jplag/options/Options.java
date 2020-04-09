@@ -10,6 +10,7 @@ package jplag.options;
 
 import jplag.Language;
 import jplag.Program;
+import jplag.SubmissionFilter;
 import jplag.clustering.SimilarityMatrix;
 
 import java.util.ArrayList;
@@ -138,6 +139,9 @@ public abstract class Options {
 
 	public List<String> fileList = new ArrayList<String>();
 
+	// Filter submissions to be checked
+	public SubmissionFilter submissionFilter;
+
 	// "FINAL" OPTIONS
 	public boolean debugParser = false;
 
@@ -214,6 +218,10 @@ public abstract class Options {
 						+ "                 stored (default: result)\n"
 						+ " -bc <dir>       Name of the directory which contains the basecode (common framework)\n"
 						+ " -c [files]      Compare a list of files. Should be the last one.\n"
+						+ " -wlist <file>   Only compare pairs listed in the file (whitelist).\n"
+						+ " -blist <file>   Only compare pairs NOT listed in the file (blacklist).\n"
+						+ "                 Submissions are listed by their name in a black- or whitelist file.\n"
+						+ "                 Paired submissions are placed in a line separated by a semicolon.\n"
 						+ " -l <language>   (Language) Supported Languages:\n                 ");
 		for (int i = 0; i < languages.length - 2; i += 2)
 			System.out.print(languages[i] + (i == 0 ? " (default), " : ", "));

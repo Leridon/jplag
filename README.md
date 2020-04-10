@@ -7,7 +7,7 @@
 Download a released version - all releases are single-JAR releases.
 
 Type `java -jar jplag-yourVersion.jar` in a console to see the command line options.
-The options as of 2019/03/20 are:
+The options as of 2019/04/10 are:
 
 ```
 JPlag (Version 2.12.0-SNAPSHOT), Copyright (c) 2004-2019 KIT - IPD Tichy, Guido Malpohl, and others.
@@ -38,6 +38,10 @@ options are:
                  stored (default: result)
  -bc <dir>       Name of the directory which contains the basecode (common framework)
  -c [files]      Compare a list of files.
+ -wlist <file>   Only compare pairs listed in the file (whitelist).
+ -blist <file>   Only compare pairs NOT listed in the file (blacklist).
+                 Submissions are listed by their name in a black- or whitelist file.
+                 Paired submissions are placed in a line separated by a semicolon.
  -l <language>   (Language) Supported Languages:
                  java19 (default), java 17, java15, java15dm, java12, java11, python3, c/c++, c#-1.2, char, text, scheme
 ```
@@ -75,6 +79,26 @@ Example: `java -jar jplag-yourVersion.jar -s -l java19  ./submissions -bc templa
 This option includes files that were given out to students as a framework or to fill in blanks - the content is compared with each submission and matching parts are excluded from mutual student matching.
 `<dir>` is considered to be the name of a subdirectory, i.e. relative path from `<root-dir>`, residing somewhere in the submission directory, on the same level as student submissions.
 **Note:** Due to a bug in all versions you have to provide the base directory without a slash at the end (e.g template, **not** template/).
+
+#### Blacklist and Whitelist options
+
+In some cases it is not desired that all submissions are checked against each other. 
+This is the case, when an assignment is handed out multiple times in successive years and previous submissions are present.
+
+In an example scenario all submissions are in a `submissions` directory.
+Two of those submissions (`old_1` and `old_2`) were already checked in previous years.
+To prevent comparison of those two submissions a blacklist file (`blacklist.txt`) has to be created with following contents (additional entries can be listed, each in a separate line):
+
+```
+old_1;old_2
+```
+
+Now the command `java -jar jplag-yourVersion.jar -l java19 -blist blacklist.txt -s submissions` can be used to start the comparison of the submissions.
+All current submissions will be compared against each other. 
+The "old" submissions will be compared against every current submission as well.
+But the "old" submissions will not be compared against each other.
+
+Another scenario would be to exclude repeated submissions of the same person, which usually show a high similarity.
 
 ## Building JPlag
 To build and run a local installation of JPlag, you can use the pom.xml in this directory (aggregator). It builds JPlag and the available frontends. 
